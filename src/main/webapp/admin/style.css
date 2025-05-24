@@ -1,0 +1,18 @@
+.bg-custom {
+	background-color: #303f9f ;
+}
+.navbar  .nav-item:hover .nav-link {
+	background-color: white;
+	color: #303f9f ;
+	border-radius: 15px;
+}
+ .welcome-message {
+        color: #3498db; /* Màu chữ */
+        font-family: 'Arial', sans-serif; /* Font chữ */
+        font-size: 24px; /* Kích thước chữ */
+        font-weight: bold; /* Độ đậm */
+        margin-bottom: 20px; /* Khoảng cách với phần nội dung phía dưới */
+        /* Thêm các thuộc tính khác nếu cần */
+    }
+    
+    

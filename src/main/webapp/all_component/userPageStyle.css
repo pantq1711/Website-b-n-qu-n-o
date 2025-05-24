@@ -1,0 +1,116 @@
+
+
+/*form*/
+
+
+.user-content-main{
+	position: relative;
+	height: fit-content	;
+}
+
+.user-content{
+	width:70%;
+	position:absolute;
+	min-height:400px;
+	right:5%;
+	top:28%;
+	border-left:2px solid #ccc;
+	padding-left:30px;
+	height: fit-content;
+}
+
+label{
+	font-size: 18px;
+	font-weight: 570;
+	font-family:Arial, Helvetica, sans-serif;
+}
+
+input.info{
+	transition: all 0.3s ease;
+	height: 50px;
+	box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+}
+
+input:focus{
+	box-shadow: rgba(6, 24, 44, 0.4) 0px 0px 0px 2px, rgba(6, 24, 44, 0.65) 0px 4px 6px -1px, rgba(255, 255, 255, 0.08) 0px 1px 0px inset;
+	border:none !important;
+	color:black;
+}
+
+.btn-update{
+	width:40% ;
+	height:40px;
+	font-size: 20px !important;
+	transition:all 0.3s linear ;
+	border:none;
+	background-color: black;
+	color:white;
+	text-transform: uppercase;
+	margin:20px 0 ;
+}
+
+.btn-update:hover{
+	background-color: #ccc !important;
+	color:rgba(0,0,0,0.7) ;
+}
+
+
+/*Tabel in old fashion*/
+
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+th{
+	font-size: 18px;
+	color:#A9A9A9!important;
+	font-weight: 550;
+	font-family:  Sans, sans-serif;
+}
+
+td{
+	font-family: 'Courier New', Courier, monospace;
+	color:rgba(0,0,0,0.7);
+	
+}
+
+.trash{
+	color :black !important;
+	text-align: center;
+	margin-left:20px;
+	transition: all 0.3s ease;
+}
+
+.trash:hover{
+	font-size: 18px!important;
+	color:#A9A9A9!important;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
