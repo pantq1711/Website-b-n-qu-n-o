@@ -15,40 +15,69 @@
     <%@include file="all_component/allCss.jsp"%>
     <link rel="stylesheet" href="all_component/userPageStyle.css">
     <style>
+        /* Reviews Page Specific Styles */
         .reviews-container {
             background: #f8f9fa;
             min-height: 100vh;
-            padding: 20px 0;
+        }
+        
+        .page-header {
+            background: linear-gradient(135deg, #ff7e5f, #feb47b);
+            color: white;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(255, 126, 95, 0.3);
+        }
+        
+        .page-header h2 {
+            margin: 0;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+        
+        .page-header .subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-top: 5px;
         }
         
         .content-card {
             background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
             overflow: hidden;
+            border: 1px solid #e9ecef;
         }
         
         .card-header-custom {
-            background: linear-gradient(135deg, #ff7e5f, #feb47b);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             padding: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
         }
         
         .card-header-custom h4 {
             margin: 0;
             font-weight: 600;
+            display: flex;
+            align-items: center;
         }
         
         .badge-count {
             background: rgba(255,255,255,0.2);
             color: white;
-            padding: 5px 12px;
+            padding: 6px 12px;
             border-radius: 20px;
             font-size: 14px;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
         }
         
         .pending-reviews-section {
@@ -65,45 +94,61 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 20px;
+            padding: 20px;
             background: #f8f9fa;
             border: 1px solid #e9ecef;
-            border-radius: 8px;
+            border-radius: 10px;
             transition: all 0.3s ease;
+            border-left: 4px solid #ff7e5f;
         }
         
         .pending-item:hover {
             background: #e9ecef;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .product-info {
+            flex: 1;
         }
         
         .product-info h6 {
-            margin: 0 0 5px 0;
+            margin: 0 0 8px 0;
             color: #333;
             font-weight: 600;
+            font-size: 16px;
         }
         
         .product-info small {
             color: #666;
             font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .product-info small i {
+            margin-right: 4px;
         }
         
         .btn-write-review {
             background: linear-gradient(135deg, #ff7e5f, #feb47b);
             color: white;
             border: none;
-            padding: 8px 16px;
-            border-radius: 20px;
+            padding: 10px 20px;
+            border-radius: 25px;
             cursor: pointer;
             transition: all 0.3s ease;
             font-size: 14px;
+            font-weight: 600;
             white-space: nowrap;
+            box-shadow: 0 3px 10px rgba(255, 126, 95, 0.3);
         }
         
         .btn-write-review:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            box-shadow: 0 5px 15px rgba(255, 126, 95, 0.4);
             color: white;
         }
         
@@ -112,16 +157,17 @@
         }
         
         .review-card {
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
             margin-bottom: 20px;
             padding: 20px;
             background: white;
             transition: all 0.3s ease;
+            border-left: 4px solid #28a745;
         }
         
         .review-card:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
             transform: translateY(-2px);
         }
         
@@ -138,17 +184,30 @@
             color: #333;
             font-weight: 600;
             margin: 0;
+            font-size: 16px;
         }
         
         .review-date {
             color: #666;
             font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
         
         .star-rating {
             color: #ffc107;
             font-size: 18px;
             margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .rating-text {
+            font-size: 14px;
+            color: #666;
+            font-weight: 500;
         }
         
         .review-content {
@@ -156,7 +215,7 @@
         }
         
         .review-title {
-            font-weight: bold;
+            font-weight: 600;
             color: #333;
             margin-bottom: 8px;
             font-size: 16px;
@@ -165,6 +224,7 @@
         .review-text {
             color: #555;
             line-height: 1.6;
+            font-size: 15px;
         }
         
         .review-actions {
@@ -180,17 +240,20 @@
             border: none;
             cursor: pointer;
             font-size: 14px;
+            font-weight: 600;
             transition: all 0.3s ease;
         }
         
         .btn-delete {
-            background-color: #dc3545;
+            background: linear-gradient(135deg, #dc3545, #c82333);
             color: white;
+            box-shadow: 0 3px 10px rgba(220, 53, 69, 0.3);
         }
         
         .btn-delete:hover {
-            background-color: #c82333;
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+            color: white;
         }
         
         .empty-state {
@@ -208,8 +271,35 @@
         .empty-state h5 {
             margin-bottom: 15px;
             color: #333;
+            font-size: 1.5rem;
         }
         
+        .empty-state p {
+            color: #666;
+            margin-bottom: 25px;
+            font-size: 16px;
+        }
+        
+        .btn-shop {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        
+        .btn-shop:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40,167,69,0.3);
+            color: white;
+            text-decoration: none;
+        }
+        
+        /* Pagination */
         .pagination-container {
             display: flex;
             justify-content: center;
@@ -221,9 +311,10 @@
             list-style: none;
             padding: 0;
             margin: 0;
-            border-radius: 5px;
+            border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            background: white;
         }
         
         .pagination li {
@@ -231,86 +322,69 @@
         }
         
         .pagination a {
-            display: block;
-            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 16px;
             text-decoration: none;
-            color: #333;
-            background-color: #fff;
-            border: 1px solid #ddd;
-            border-right: none;
+            color: #495057;
+            background-color: white;
+            border-right: 1px solid #dee2e6;
             transition: all 0.3s ease;
+            font-weight: 500;
         }
         
         .pagination li:last-child a {
-            border-right: 1px solid #ddd;
+            border-right: none;
         }
         
         .pagination a:hover {
-            background-color: #f5f5f5;
-            color: #000;
+            background-color: #e9ecef;
+            color: #333;
         }
         
         .pagination .active a {
-            background-color: #007bff;
+            background: linear-gradient(135deg, #007bff, #0056b3);
             color: white;
-            border-color: #007bff;
+            font-weight: 600;
         }
         
         .pagination .disabled a {
-            color: #999;
+            color: #6c757d;
             cursor: not-allowed;
             background-color: #f8f9fa;
         }
         
-        .section-title {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
-        .toggle-section {
-            background: none;
-            border: none;
-            color: #007bff;
-            cursor: pointer;
-            font-size: 14px;
-            padding: 5px 10px;
-            border-radius: 4px;
-            transition: all 0.3s ease;
-        }
-        
-        .toggle-section:hover {
-            background: #f8f9fa;
-        }
-        
-        .collapsed-section {
-            display: none;
-        }
-        
-        /* Modal styles */
+        /* Modal Styles */
         .modal-content {
-            border-radius: 10px;
+            border-radius: 12px;
             border: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
         
         .modal-header-custom {
             background: linear-gradient(135deg, #ff7e5f, #feb47b);
             color: white;
-            border-radius: 10px 10px 0 0;
+            border-radius: 12px 12px 0 0;
             padding: 20px;
+            border: none;
         }
         
         .modal-header-custom .close {
             color: white;
             opacity: 0.8;
+            font-size: 24px;
+        }
+        
+        .modal-header-custom .close:hover {
+            opacity: 1;
         }
         
         .star-input {
             display: flex;
-            gap: 5px;
+            gap: 8px;
             margin: 15px 0;
-            flex-direction: row;
+            justify-content: flex-start;
         }
         
         .star-input input[type="radio"] {
@@ -318,23 +392,68 @@
         }
         
         .star-input label {
-            font-size: 24px;
+            font-size: 28px;
             color: #ddd;
             cursor: pointer;
-            transition: color 0.3s ease;
+            transition: all 0.3s ease;
             user-select: none;
         }
         
         .star-input label:hover {
             color: #ffc107;
+            transform: scale(1.1);
         }
         
         .star-input label.active {
             color: #ffc107;
         }
         
-        /* Responsive */
-        @media (max-width: 768px) {
+        .modal-body {
+            padding: 30px;
+        }
+        
+        .form-group label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .form-control {
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            padding: 12px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-control:focus {
+            border-color: #ff7e5f;
+            box-shadow: 0 0 0 0.2rem rgba(255, 126, 95, 0.25);
+        }
+        
+        .btn-submit-review {
+            background: linear-gradient(135deg, #ff7e5f, #feb47b);
+            border: none;
+            border-radius: 25px;
+            padding: 12px 25px;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-submit-review:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 126, 95, 0.4);
+            color: white;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .user-content {
+                padding: 20px;
+            }
+        }
+        
+        @media (max-width: 992px) {
             .pending-item {
                 flex-direction: column;
                 align-items: flex-start;
@@ -342,23 +461,197 @@
             }
             
             .btn-write-review {
-                align-self: flex-end;
+                align-self: stretch;
+                text-align: center;
             }
             
             .review-header {
                 flex-direction: column;
                 align-items: flex-start;
+                gap: 10px;
             }
             
             .review-actions {
                 justify-content: flex-start;
+                flex-wrap: wrap;
             }
             
-            .section-title {
+            .card-header-custom {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .page-header {
+                padding: 15px;
+                margin-bottom: 20px;
+            }
+            
+            .page-header h2 {
+                font-size: 1.5rem;
+            }
+            
+            .content-card {
+                margin-bottom: 20px;
+            }
+            
+            .card-header-custom {
+                padding: 15px;
+            }
+            
+            .card-header-custom h4 {
+                font-size: 1.1rem;
+            }
+            
+            .pending-reviews-section,
+            .reviews-section {
+                padding: 20px;
+            }
+            
+            .pending-item {
+                padding: 15px;
+            }
+            
+            .product-info h6 {
+                font-size: 15px;
+            }
+            
+            .product-info small {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 10px;
+                gap: 8px;
             }
+            
+            .review-card {
+                padding: 15px;
+            }
+            
+            .star-input {
+                justify-content: center;
+            }
+            
+            .star-input label {
+                font-size: 24px;
+            }
+            
+            .pagination a {
+                padding: 10px 12px;
+                font-size: 14px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .user-content {
+                padding: 10px;
+            }
+            
+            .page-header {
+                padding: 10px;
+                margin-bottom: 15px;
+            }
+            
+            .page-header h2 {
+                font-size: 1.3rem;
+                flex-direction: column;
+                text-align: center;
+                gap: 5px;
+            }
+            
+            .card-header-custom {
+                padding: 10px;
+            }
+            
+            .card-header-custom h4 {
+                font-size: 1rem;
+            }
+            
+            .pending-reviews-section,
+            .reviews-section {
+                padding: 15px;
+            }
+            
+            .pending-item {
+                padding: 10px;
+            }
+            
+            .btn-write-review {
+                padding: 8px 16px;
+                font-size: 13px;
+            }
+            
+            .review-card {
+                padding: 10px;
+            }
+            
+            .product-name {
+                font-size: 15px;
+            }
+            
+            .review-title {
+                font-size: 15px;
+            }
+            
+            .review-text {
+                font-size: 14px;
+            }
+            
+            .star-input label {
+                font-size: 20px;
+            }
+            
+            .modal-body {
+                padding: 20px;
+            }
+            
+            .empty-state {
+                padding: 40px 15px;
+            }
+            
+            .empty-state i {
+                font-size: 3rem;
+            }
+            
+            .empty-state h5 {
+                font-size: 1.3rem;
+            }
+            
+            .pagination a {
+                padding: 8px 10px;
+                font-size: 13px;
+            }
+        }
+        
+        /* Alert Styles */
+        .alert {
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .alert-success {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+        
+        .alert-danger {
+            background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+        
+        .alert .close {
+            font-size: 20px;
+            font-weight: 600;
+            opacity: 0.7;
+        }
+        
+        .alert .close:hover {
+            opacity: 1;
         }
     </style>
 </head>
@@ -373,6 +666,15 @@
         <%@include file="all_component/nav-user-page.jsp"%>
         
         <div class="user-content">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h2>
+                    <i class="fas fa-star mr-3"></i>
+                    <span>Đánh Giá Của Tôi</span>
+                </h2>
+                <div class="subtitle">Quản lý và theo dõi các đánh giá sản phẩm của bạn</div>
+            </div>
+            
             <!-- Alert Messages -->
             <c:if test="${not empty succMsg}">
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -447,13 +749,13 @@
                             <div class="product-info">
                                 <h6><%=order.get("fashionName")%></h6>
                                 <small>
-                                    <i class="fas fa-receipt mr-1"></i>Đơn hàng: <%=order.get("orderId")%> | 
-                                    <i class="fas fa-calendar mr-1"></i><%=order.get("orderDate")%>
+                                    <span><i class="fas fa-receipt"></i>Đơn hàng: <%=order.get("orderId")%></span>
+                                    <span><i class="fas fa-calendar-alt"></i><%=order.get("orderDate")%></span>
                                 </small>
                             </div>
                             <button class="btn-write-review" 
                                     onclick="openReviewModal('<%=order.get("fashionId")%>', '<%=order.get("orderId")%>', '<%=order.get("fashionName")%>')">
-                                <i class="fas fa-pen mr-1"></i>Viết đánh giá
+                                <i class="fas fa-pen mr-2"></i>Viết đánh giá
                             </button>
                         </div>
                         <% } %>
@@ -465,7 +767,7 @@
                         <ul class="pagination">
                             <li class="<%=pendingPage == 1 ? "disabled" : ""%>">
                                 <a href="?pendingPage=<%=pendingPage - 1%>">
-                                    <i class="fas fa-chevron-left"></i> Trước
+                                    <i class="fas fa-chevron-left mr-1"></i>Trước
                                 </a>
                             </li>
                             
@@ -477,7 +779,7 @@
                             
                             <li class="<%=pendingPage == totalPendingPages ? "disabled" : ""%>">
                                 <a href="?pendingPage=<%=pendingPage + 1%>">
-                                    Sau <i class="fas fa-chevron-right"></i>
+                                    Sau<i class="fas fa-chevron-right ml-1"></i>
                                 </a>
                             </li>
                         </ul>
@@ -525,7 +827,7 @@
                         <i class="fas fa-star"></i>
                         <h5>Bạn chưa có đánh giá nào</h5>
                         <p>Hãy mua sắm và chia sẻ trải nghiệm của bạn về sản phẩm!</p>
-                        <a href="index.jsp" class="btn btn-primary">
+                        <a href="index.jsp" class="btn-shop">
                             <i class="fas fa-shopping-bag mr-2"></i>Tiếp tục mua sắm
                         </a>
                     </div>
@@ -536,13 +838,14 @@
                         <div class="review-header">
                             <h5 class="product-name"><%=review.getFashionName()%></h5>
                             <div class="review-date">
-                                <i class="fas fa-calendar mr-1"></i><%=review.getReviewDate()%>
+                                <i class="fas fa-calendar-alt"></i>
+                                <%=review.getReviewDate()%>
                             </div>
                         </div>
                         
                         <div class="star-rating">
                             <%=review.getStarRating()%>
-                            <span class="ml-2">(<%=review.getRating()%>/5)</span>
+                            <span class="rating-text">(<%=review.getRating()%>/5 sao)</span>
                         </div>
                         
                         <div class="review-content">
@@ -557,7 +860,7 @@
                         <div class="review-actions">
                             <button class="btn-review btn-delete" 
                                     onclick="deleteReview(<%=review.getReviewId()%>)">
-                                <i class="fas fa-trash mr-1"></i>Xóa
+                                <i class="fas fa-trash mr-2"></i>Xóa đánh giá
                             </button>
                         </div>
                     </div>
@@ -569,7 +872,7 @@
                         <ul class="pagination">
                             <li class="<%=reviewPage == 1 ? "disabled" : ""%>">
                                 <a href="?reviewPage=<%=reviewPage - 1%><%=request.getParameter("pendingPage") != null ? "&pendingPage=" + request.getParameter("pendingPage") : ""%>">
-                                    <i class="fas fa-chevron-left"></i> Trước
+                                    <i class="fas fa-chevron-left mr-1"></i>Trước
                                 </a>
                             </li>
                             
@@ -581,7 +884,7 @@
                             
                             <li class="<%=reviewPage == totalReviewPages ? "disabled" : ""%>">
                                 <a href="?reviewPage=<%=reviewPage + 1%><%=request.getParameter("pendingPage") != null ? "&pendingPage=" + request.getParameter("pendingPage") : ""%>">
-                                    Sau <i class="fas fa-chevron-right"></i>
+                                    Sau<i class="fas fa-chevron-right ml-1"></i>
                                 </a>
                             </li>
                         </ul>
@@ -608,7 +911,7 @@
                 </div>
                 
                 <form action="add_review" method="post">
-                    <div class="modal-body" style="padding: 30px;">
+                    <div class="modal-body">
                         <input type="hidden" id="modalFashionId" name="fashionId">
                         <input type="hidden" id="modalOrderId" name="orderId">
                         
@@ -642,27 +945,23 @@
                             <label for="reviewTitle"><strong>Tiêu đề đánh giá: *</strong></label>
                             <input type="text" class="form-control" id="reviewTitle" 
                                    name="reviewTitle" maxlength="200" required
-                                   placeholder="Nhập tiêu đề cho đánh giá của bạn"
-                                   style="border-radius: 8px; padding: 12px;">
+                                   placeholder="Nhập tiêu đề cho đánh giá của bạn">
                         </div>
                         
                         <div class="form-group">
                             <label for="reviewContent"><strong>Nội dung đánh giá:</strong></label>
                             <textarea class="form-control" id="reviewContent" name="reviewContent" 
                                       rows="5" maxlength="1000"
-                                      placeholder="Chia sẻ trải nghiệm của bạn về sản phẩm này..."
-                                      style="border-radius: 8px; padding: 12px;"></textarea>
+                                      placeholder="Chia sẻ trải nghiệm của bạn về sản phẩm này..."></textarea>
                             <small class="form-text text-muted">Tối đa 1000 ký tự</small>
                         </div>
                     </div>
                     
-                    <div class="modal-footer" style="padding: 20px 30px;">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal"
-                                style="border-radius: 20px; padding: 8px 20px;">
-                            Hủy
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                            <i class="fas fa-times mr-2"></i>Hủy
                         </button>
-                        <button type="submit" class="btn btn-primary"
-                                style="background: linear-gradient(135deg, #ff7e5f, #feb47b); border: none; border-radius: 20px; padding: 8px 20px;">
+                        <button type="submit" class="btn btn-submit-review">
                             <i class="fas fa-paper-plane mr-2"></i>Gửi đánh giá
                         </button>
                     </div>
@@ -757,19 +1056,6 @@
                         if (ratingText) ratingText.textContent = '';
                     }
                 });
-            }
-            
-            // Set active navigation
-            const items = document.querySelectorAll('.nav-ver.nav-link');
-            if (items.length > 5) {
-                items.forEach(item => item.classList.remove('active'));
-                items[5].classList.add('active');
-                
-                const text = items[5].innerHTML;
-                const directionElement = document.getElementById('direction');
-                if (directionElement) {
-                    directionElement.innerHTML = text;
-                }
             }
             
             // Auto close alerts

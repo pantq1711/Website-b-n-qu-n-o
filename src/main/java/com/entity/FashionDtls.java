@@ -1,4 +1,3 @@
-
 /**
  *
  * @author Anphan
@@ -15,13 +14,14 @@ public class FashionDtls {
 	private String pricebuy;
 	private int quantity;
 	private String describe;
+	private boolean isDeleted; // Thêm thuộc tính để đánh dấu sản phẩm đã xóa
+	
 	public FashionDtls() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 	
 	public FashionDtls(String fashionName, String size, String price, String fashionCategory, String status, String photoName, String email, String priceBuy, int quantity, String describe) {
-
 		this.fashionName = fashionName;
 		this.price = price;
 		this.fashionCategory = fashionCategory;
@@ -30,10 +30,12 @@ public class FashionDtls {
 		this.photoName = photoName;
 		this.email = email;
 		if(this.fashionCategory.equals("Cũ"))
-		this.pricebuy = "0";
-		else this.pricebuy = priceBuy;
+			this.pricebuy = "0";
+		else 
+			this.pricebuy = priceBuy;
 		this.quantity = quantity;
 		this.describe = describe;
+		this.isDeleted = false; // Mặc định là chưa xóa
 	}
 
 	public int getFashionId() {
@@ -73,9 +75,10 @@ public class FashionDtls {
 	}
 
 	public void setPriceBuy(String price, String cat) {
-		if(cat.equals("Cũ")) this.pricebuy = "0";
+		if(cat.equals("Cũ")) 
+			this.pricebuy = "0";
 		else
-		this.pricebuy = price;
+			this.pricebuy = price;
 	}
 
 	public String getPrice() {
@@ -125,15 +128,21 @@ public class FashionDtls {
 	public void setEmail(String email) {
 		this.email = email;
 	}
+	
+	// Getter và setter cho isDeleted
+	public boolean isDeleted() {
+		return isDeleted;
+	}
+
+	public void setDeleted(boolean isDeleted) {
+		this.isDeleted = isDeleted;
+	}
 
 	@Override
 	public String toString() {
 		return "FashionDtls [fashionId=" + fashionId + ", fashionName=" + fashionName + ", price=" + price
 				+ ", fashionCategory=" + fashionCategory + ", status=" + status + ", size=" + size + ", photoName="
 				+ photoName + ", email=" + email + ", pricebuy=" + pricebuy + ", quantity=" + quantity + ", describe="
-				+ describe + "]";
+				+ describe + ", isDeleted=" + isDeleted + "]";
 	}
-
-
-
 }

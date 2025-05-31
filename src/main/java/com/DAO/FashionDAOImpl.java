@@ -399,38 +399,7 @@ public class FashionDAOImpl implements FashionDAO {
 		return f;
 	}
 
-	public List<FashionDtls> getFashionBySearch(String ch) {
-		List<FashionDtls> list = new ArrayList<>();
-		FashionDtls b = null;
-		try {
-			String sql = "select * from fashion_dtls where fashionName like ? or Size like ? or fashionCategory like ? and status=?";
-			PreparedStatement ps = conn.prepareStatement(sql);
-			ps.setString(1, "%" + ch + "%");
-			ps.setString(2, "%" + ch + "%");
-			ps.setString(3, "%" + ch + "%");
-			ps.setString(4, "Active");
-
-			ResultSet rs = ps.executeQuery();
-			while (rs.next()) {
-				b = new FashionDtls();
-				b.setFashionId(rs.getInt(1));
-				b.setFashionName(rs.getString(2));
-				b.setSize(rs.getString(3));
-				b.setPrice(rs.getString(4));
-				b.setFashionCategory(rs.getString(5));
-				b.setStatus(rs.getString(6));
-				b.setPhotoName(rs.getString(7));
-				b.setEmail(rs.getString(8));
-				b.setPriceBuy(rs.getString(9), b.getFashionCategory());
-				b.setQuantity(rs.getInt(10));
-				b.setDescribe(rs.getString(11));
-				list.add(b);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return list;
-	}
+	
 	public List<FashionDtls> getListByPage(ArrayList<FashionDtls> list, int start, int end){
 		ArrayList<FashionDtls> arr = new ArrayList<>();
 		for(int i=start; i<end; i++) {
@@ -899,4 +868,408 @@ public class FashionDAOImpl implements FashionDAO {
         
         return success;
     }
+ // Enhanced search methods and safe delete logic for FashionDAOImpl.java
+ // Add these methods to your existing FashionDAOImpl class
+
+ /**
+  * Enhanced search with multiple filters
+  */
+ public List<FashionDtls> getFashionByAdvancedSearch(String searchTerm, String category, 
+                                                    String minPrice, String maxPrice, String size) {
+     List<FashionDtls> list = new ArrayList<>();
+     FashionDtls b = null;
+     
+     try {
+         StringBuilder sql = new StringBuilder("SELECT * FROM fashion_dtls WHERE status = 'Active'");
+         List<Object> params = new ArrayList<>();
+         
+         // Search term filter
+         if (searchTerm != null && !searchTerm.trim().isEmpty()) {
+             sql.append(" AND (fashionName LIKE ? OR des LIKE ?)");
+             params.add("%" + searchTerm.trim() + "%");
+             params.add("%" + searchTerm.trim() + "%");
+         }
+         
+         // Category filter
+         if (category != null && !category.trim().isEmpty() && !"all".equalsIgnoreCase(category)) {
+             sql.append(" AND fashionCategory = ?");
+             params.add(category);
+         }
+         
+         // Size filter
+         if (size != null && !size.trim().isEmpty() && !"all".equalsIgnoreCase(size)) {
+             sql.append(" AND size = ?");
+             params.add(size);
+         }
+         
+         // Price range filter
+         if (minPrice != null && !minPrice.trim().isEmpty()) {
+             sql.append(" AND CAST(REPLACE(price, ',', '') AS DECIMAL) >= ?");
+             params.add(Double.parseDouble(minPrice.replaceAll("[^0-9.]", "")));
+         }
+         
+         if (maxPrice != null && !maxPrice.trim().isEmpty()) {
+             sql.append(" AND CAST(REPLACE(price, ',', '') AS DECIMAL) <= ?");
+             params.add(Double.parseDouble(maxPrice.replaceAll("[^0-9.]", "")));
+         }
+         
+         sql.append(" ORDER BY fashionId DESC");
+         
+         PreparedStatement ps = conn.prepareStatement(sql.toString());
+         
+         // Set parameters
+         for (int i = 0; i < params.size(); i++) {
+             ps.setObject(i + 1, params.get(i));
+         }
+         
+         ResultSet rs = ps.executeQuery();
+         while (rs.next()) {
+             b = new FashionDtls();
+             b.setFashionId(rs.getInt(1));
+             b.setFashionName(rs.getString(2));
+             b.setSize(rs.getString(3));
+             b.setPrice(rs.getString(4));
+             b.setFashionCategory(rs.getString(5));
+             b.setStatus(rs.getString(6));
+             b.setPhotoName(rs.getString(7));
+             b.setEmail(rs.getString(8));
+             b.setPriceBuy(rs.getString(9), b.getFashionCategory());
+             b.setQuantity(rs.getInt(10));
+             b.setDescribe(rs.getString(11));
+             list.add(b);
+         }
+     } catch (Exception e) {
+         e.printStackTrace();
+     }
+     return list;
+ }
+
+ /**
+  * Enhanced basic search with better matching
+  */
+ @Override
+ public List<FashionDtls> getFashionBySearch(String searchTerm) {
+     List<FashionDtls> list = new ArrayList<>();
+     FashionDtls b = null;
+     
+     try {
+         String sql = "SELECT * FROM fashion_dtls WHERE status = 'Active' AND " +
+                     "(fashionName LIKE ? OR size LIKE ? OR fashionCategory LIKE ? OR des LIKE ?) " +
+                     "ORDER BY " +
+                     "CASE " +
+                     "  WHEN fashionName LIKE ? THEN 1 " +
+                     "  WHEN fashionName LIKE ? THEN 2 " +
+                     "  WHEN des LIKE ? THEN 3 " +
+                     "  ELSE 4 " +
+                     "END, fashionId DESC";
+                     
+         PreparedStatement ps = conn.prepareStatement(sql);
+         String searchPattern = "%" + searchTerm + "%";
+         String exactPattern = searchTerm + "%";
+         
+         // Set parameters for WHERE clause
+         ps.setString(1, searchPattern);  // fashionName
+         ps.setString(2, searchPattern);  // size
+         ps.setString(3, searchPattern);  // fashionCategory
+         ps.setString(4, searchPattern);  // description
+         
+         // Set parameters for ORDER BY clause (relevance ranking)
+         ps.setString(5, exactPattern);   // exact match at start
+         ps.setString(6, searchPattern);  // contains match
+         ps.setString(7, searchPattern);  // description match
+         
+         ResultSet rs = ps.executeQuery();
+         while (rs.next()) {
+             b = new FashionDtls();
+             b.setFashionId(rs.getInt(1));
+             b.setFashionName(rs.getString(2));
+             b.setSize(rs.getString(3));
+             b.setPrice(rs.getString(4));
+             b.setFashionCategory(rs.getString(5));
+             b.setStatus(rs.getString(6));
+             b.setPhotoName(rs.getString(7));
+             b.setEmail(rs.getString(8));
+             b.setPriceBuy(rs.getString(9), b.getFashionCategory());
+             b.setQuantity(rs.getInt(10));
+             b.setDescribe(rs.getString(11));
+             list.add(b);
+         }
+     } catch (Exception e) {
+         e.printStackTrace();
+     }
+     return list;
+ }
+
+ /**
+  * Get fashions by category
+  */
+ public List<FashionDtls> getFashionByCategory(String category) {
+     List<FashionDtls> list = new ArrayList<>();
+     FashionDtls b = null;
+     
+     try {
+         String sql = "SELECT * FROM fashion_dtls WHERE fashionCategory = ? AND status = 'Active' ORDER BY fashionId DESC";
+         PreparedStatement ps = conn.prepareStatement(sql);
+         ps.setString(1, category);
+         
+         ResultSet rs = ps.executeQuery();
+         while (rs.next()) {
+             b = new FashionDtls();
+             b.setFashionId(rs.getInt(1));
+             b.setFashionName(rs.getString(2));
+             b.setSize(rs.getString(3));
+             b.setPrice(rs.getString(4));
+             b.setFashionCategory(rs.getString(5));
+             b.setStatus(rs.getString(6));
+             b.setPhotoName(rs.getString(7));
+             b.setEmail(rs.getString(8));
+             b.setPriceBuy(rs.getString(9), b.getFashionCategory());
+             b.setQuantity(rs.getInt(10));
+             b.setDescribe(rs.getString(11));
+             list.add(b);
+         }
+     } catch (Exception e) {
+         e.printStackTrace();
+     }
+     return list;
+ }
+
+ /**
+  * Get fashions by price range
+  */
+ public List<FashionDtls> getFashionByPriceRange(String minPrice, String maxPrice) {
+     List<FashionDtls> list = new ArrayList<>();
+     FashionDtls b = null;
+     
+     try {
+         StringBuilder sql = new StringBuilder("SELECT * FROM fashion_dtls WHERE status = 'Active'");
+         List<Object> params = new ArrayList<>();
+         
+         if (minPrice != null && !minPrice.trim().isEmpty()) {
+             sql.append(" AND CAST(REPLACE(price, ',', '') AS DECIMAL) >= ?");
+             params.add(Double.parseDouble(minPrice.replaceAll("[^0-9.]", "")));
+         }
+         
+         if (maxPrice != null && !maxPrice.trim().isEmpty()) {
+             sql.append(" AND CAST(REPLACE(price, ',', '') AS DECIMAL) <= ?");
+             params.add(Double.parseDouble(maxPrice.replaceAll("[^0-9.]", "")));
+         }
+         
+         sql.append(" ORDER BY CAST(REPLACE(price, ',', '') AS DECIMAL) ASC");
+         
+         PreparedStatement ps = conn.prepareStatement(sql.toString());
+         
+         for (int i = 0; i < params.size(); i++) {
+             ps.setObject(i + 1, params.get(i));
+         }
+         
+         ResultSet rs = ps.executeQuery();
+         while (rs.next()) {
+             b = new FashionDtls();
+             b.setFashionId(rs.getInt(1));
+             b.setFashionName(rs.getString(2));
+             b.setSize(rs.getString(3));
+             b.setPrice(rs.getString(4));
+             b.setFashionCategory(rs.getString(5));
+             b.setStatus(rs.getString(6));
+             b.setPhotoName(rs.getString(7));
+             b.setEmail(rs.getString(8));
+             b.setPriceBuy(rs.getString(9), b.getFashionCategory());
+             b.setQuantity(rs.getInt(10));
+             b.setDescribe(rs.getString(11));
+             list.add(b);
+         }
+     } catch (Exception e) {
+         e.printStackTrace();
+     }
+     return list;
+ }
+
+ /**
+  * Get fashions by size
+  */
+ public List<FashionDtls> getFashionBySize(String size) {
+     List<FashionDtls> list = new ArrayList<>();
+     FashionDtls b = null;
+     
+     try {
+         String sql = "SELECT * FROM fashion_dtls WHERE size = ? AND status = 'Active' ORDER BY fashionId DESC";
+         PreparedStatement ps = conn.prepareStatement(sql);
+         ps.setString(1, size);
+         
+         ResultSet rs = ps.executeQuery();
+         while (rs.next()) {
+             b = new FashionDtls();
+             b.setFashionId(rs.getInt(1));
+             b.setFashionName(rs.getString(2));
+             b.setSize(rs.getString(3));
+             b.setPrice(rs.getString(4));
+             b.setFashionCategory(rs.getString(5));
+             b.setStatus(rs.getString(6));
+             b.setPhotoName(rs.getString(7));
+             b.setEmail(rs.getString(8));
+             b.setPriceBuy(rs.getString(9), b.getFashionCategory());
+             b.setQuantity(rs.getInt(10));
+             b.setDescribe(rs.getString(11));
+             list.add(b);
+         }
+     } catch (Exception e) {
+         e.printStackTrace();
+     }
+     return list;
+ }
+
+ /**
+  * Check if fashion has pending orders
+  */
+ public boolean hasPendingOrders(int fashionId) {
+     boolean hasPending = false;
+     try {
+         String sql = "SELECT COUNT(*) FROM fashion_order fo " +
+                     "JOIN fashion_dtls fd ON fo.fashionName = fd.fashionName " +
+                     "WHERE fd.fashionId = ?";
+         
+         PreparedStatement ps = conn.prepareStatement(sql);
+         ps.setInt(1, fashionId);
+         
+         ResultSet rs = ps.executeQuery();
+         if (rs.next()) {
+             hasPending = rs.getInt(1) > 0;
+         }
+     } catch (Exception e) {
+         e.printStackTrace();
+     }
+     return hasPending;
+ }
+
+ /**
+  * Get count of pending orders for a fashion item
+  */
+ public int getPendingOrderCount(int fashionId) {
+     int count = 0;
+     try {
+         String sql = "SELECT COUNT(*) FROM fashion_order fo " +
+                     "JOIN fashion_dtls fd ON fo.fashionName = fd.fashionName " +
+                     "WHERE fd.fashionId = ?";
+         
+         PreparedStatement ps = conn.prepareStatement(sql);
+         ps.setInt(1, fashionId);
+         
+         ResultSet rs = ps.executeQuery();
+         if (rs.next()) {
+             count = rs.getInt(1);
+         }
+     } catch (Exception e) {
+         e.printStackTrace();
+     }
+     return count;
+ }
+
+ /**
+  * Get list of pending order IDs for a fashion item
+  */
+ public List<String> getPendingOrderIds(int fashionId) {
+     List<String> orderIds = new ArrayList<>();
+     try {
+         String sql = "SELECT DISTINCT fo.order_id FROM fashion_order fo " +
+                     "JOIN fashion_dtls fd ON fo.fashionName = fd.fashionName " +
+                     "WHERE fd.fashionId = ? AND fo.order_id IS NOT NULL";
+         
+         PreparedStatement ps = conn.prepareStatement(sql);
+         ps.setInt(1, fashionId);
+         
+         ResultSet rs = ps.executeQuery();
+         while (rs.next()) {
+             String orderId = rs.getString("order_id");
+             if (orderId != null && !orderId.trim().isEmpty()) {
+                 orderIds.add(orderId);
+             }
+         }
+     } catch (Exception e) {
+         e.printStackTrace();
+     }
+     return orderIds;
+ }
+
+ /**
+  * Safe delete fashion with business logic validation
+  */
+ public boolean safeDeleteFashion(int fashionId) {
+     boolean success = false;
+     
+     try {
+         conn.setAutoCommit(false);
+         
+         // Check if fashion exists
+         FashionDtls fashion = getFashionById(fashionId);
+         if (fashion == null) {
+             System.out.println("Sản phẩm với ID " + fashionId + " không tồn tại");
+             conn.rollback();
+             return false;
+         }
+         
+         // Check for pending orders
+         if (hasPendingOrders(fashionId)) {
+             int pendingCount = getPendingOrderCount(fashionId);
+             List<String> orderIds = getPendingOrderIds(fashionId);
+             
+             System.out.println("Không thể xóa sản phẩm '" + fashion.getFashionName() + 
+                              "' vì có " + pendingCount + " đơn hàng đang chờ xử lý");
+             System.out.println("Các đơn hàng: " + String.join(", ", orderIds));
+             
+             conn.rollback();
+             return false;
+         }
+         
+         // Check if product is in any shopping carts
+         String checkCartSql = "SELECT COUNT(*) FROM cart WHERE fid = ?";
+         PreparedStatement checkCartPs = conn.prepareStatement(checkCartSql);
+         checkCartPs.setInt(1, fashionId);
+         ResultSet cartRs = checkCartPs.executeQuery();
+         
+         int cartCount = 0;
+         if (cartRs.next()) {
+             cartCount = cartRs.getInt(1);
+         }
+         
+         if (cartCount > 0) {
+             // Remove from all carts first
+             String deleteCartSql = "DELETE FROM cart WHERE fid = ?";
+             PreparedStatement deleteCartPs = conn.prepareStatement(deleteCartSql);
+             deleteCartPs.setInt(1, fashionId);
+             int cartDeleted = deleteCartPs.executeUpdate();
+             
+             System.out.println("Đã xóa sản phẩm khỏi " + cartDeleted + " giỏ hàng");
+         }
+         
+         // Delete the fashion item
+         String deleteFashionSql = "DELETE FROM fashion_dtls WHERE fashionId = ?";
+         PreparedStatement deleteFashionPs = conn.prepareStatement(deleteFashionSql);
+         deleteFashionPs.setInt(1, fashionId);
+         
+         int deleted = deleteFashionPs.executeUpdate();
+         if (deleted > 0) {
+             success = true;
+             System.out.println("Đã xóa thành công sản phẩm: " + fashion.getFashionName());
+         }
+         
+         conn.commit();
+         
+     } catch (Exception e) {
+         try {
+             conn.rollback();
+         } catch (Exception ex) {
+             ex.printStackTrace();
+         }
+         e.printStackTrace();
+     } finally {
+         try {
+             conn.setAutoCommit(true);
+         } catch (Exception e) {
+             e.printStackTrace();
+         }
+     }
+     
+     return success;
+ }
 }

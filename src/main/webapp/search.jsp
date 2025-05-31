@@ -1,4 +1,3 @@
-<%--Nguyen Trong Vu--%>
 <%@ page import="com.entity.*"%>
 <%@ page import="java.util.List"%>
 <%@ page import="com.DB.DBConnect"%>

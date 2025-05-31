@@ -33,11 +33,31 @@ public interface FashionDAO {
 
     public boolean oldFashionDelete(String email, String cat, int id);
 
-    public List<FashionDtls> getFashionBySearch(String ch);
+    // Enhanced search methods
+    public List<FashionDtls> getFashionBySearch(String searchTerm);
+    
+    public List<FashionDtls> getFashionByAdvancedSearch(String searchTerm, String category, 
+                                                       String minPrice, String maxPrice, String size);
+    
+    public List<FashionDtls> getFashionByCategory(String category);
+    
+    public List<FashionDtls> getFashionByPriceRange(String minPrice, String maxPrice);
+    
+    public List<FashionDtls> getFashionBySize(String size);
     
     public List<FashionDtls> getListByPage(ArrayList<FashionDtls> list, int start, int end);
     
     public List<FashionDtls> getSortedFashion(String sortingOption, String category);
+    
     public List<FashionDtls> getFashionsExpired();
-
+    
+    // New methods for delete validation
+    public boolean hasPendingOrders(int fashionId);
+    
+    public int getPendingOrderCount(int fashionId);
+    
+    public List<String> getPendingOrderIds(int fashionId);
+    
+    // Safe delete method
+    public boolean safeDeleteFashion(int fashionId);
 }
